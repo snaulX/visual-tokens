@@ -1,5 +1,7 @@
 package com.snaulX.VisualTokens.views
 
+import com.snaulX.VisualTokens.blocks.StringBlock
+import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.input.KeyCombination
 import javafx.stage.Screen
@@ -39,16 +41,14 @@ class MainView : View("Visual Tokens") {
             }
             row {
                 buttonbar {
+                    paddingAll = 20.0
                     button("Compile")
                     button("Run")
                     button("Compile & Run")
                 }
             }
             row {
-                addColumn(0,
-                    hbox {
-                    //blocks
-                })
+                addColumn(0, StringBlock().root)
                 /*listview<Block> {
 
                 }*/
