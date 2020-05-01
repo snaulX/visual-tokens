@@ -1,9 +1,7 @@
 package com.snaulX.VisualTokens.views
 
-import com.snaulX.VisualTokens.blocks.StringBlock
-import javafx.geometry.Insets
 import javafx.geometry.Pos
-import javafx.scene.input.KeyCombination
+import javafx.scene.text.Font
 import javafx.stage.Screen
 import tornadofx.*
 
@@ -14,8 +12,6 @@ class MainView : View("Visual Tokens") {
         println() //why lambda wanna return last expression and I must write this shit
     }
     val openFile = {
-    }
-    val saveFile = {
     }
     val exit = {
         this.close()
@@ -31,32 +27,36 @@ class MainView : View("Visual Tokens") {
                     menu("File") {
                         item("New File", "ctrl+n").action(newFile)
                         item("Open File", "ctrl+o").action(openFile)
-                        item("Save File", "ctrl+s").action(saveFile)
                         separator()
                         item("Exit", "ctrl+q").action(exit)
                     }
                 }
             }
             row {
-                buttonbar {
-                    paddingAll = 20.0
-                    button("Compile")
-                    button("Run")
-                    button("Compile & Run")
+                paddingAll = 100.0
+                alignment = Pos.CENTER
+                label {
+                    text = """For create new program - Press Ctrl+N or File->New File
+                        |For open your program - Press Ctrl+O or File->Open File
+                        |For exit from this program - Press Ctrl+Q or File->Exit
+                    """.trimMargin()
+                    font = Font.font(30.0)
                 }
             }
             row {
                 paddingAll = 20.0
+                alignment = Pos.CENTER
                 label {
-                    alignment = Pos.CENTER
                     text = "Visual Tokens"
+                    font = Font.font(30.0)
                 }
             }
             row {
                 paddingAll = 20.0
+                alignment = Pos.BOTTOM_CENTER
                 label {
-                    alignment = Pos.BOTTOM_CENTER
                     text = "Created by snaulX in 2020"
+                    font = Font.font(30.0)
                 }
             }
         }
