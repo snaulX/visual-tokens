@@ -10,13 +10,15 @@ import tornadofx.*
 class MainView : View("Visual Tokens") {
     
     val newFile = {
-        println("New File")
+        Worksheet("Untitled").openWindow()
+        println() //why lambda wanna return last expression and I must write this shit
     }
     val openFile = {
-        println("Open File")
     }
     val saveFile = {
-        println("Save File")
+    }
+    val exit = {
+        this.close()
     }
 
     override val root = anchorpane {
@@ -26,16 +28,12 @@ class MainView : View("Visual Tokens") {
             maxWidth = rect.width
             row {
                 menubar {
-                    menu {
-                        text = "File"
-                        menubutton {
-                             text = "New File"
-                             shortcut(KeyCombination.keyCombination("ctrl+n"), newFile)
-                        }
-                        menubutton {
-                            text = "Open File"
-                            shortcut(KeyCombination.keyCombination("ctrl+o"), openFile)
-                        }
+                    menu("File") {
+                        item("New File", "ctrl+n").action(newFile)
+                        item("Open File", "ctrl+o").action(openFile)
+                        item("Save File", "ctrl+s").action(saveFile)
+                        separator()
+                        item("Exit", "ctrl+q").action(exit)
                     }
                 }
             }
@@ -48,18 +46,14 @@ class MainView : View("Visual Tokens") {
                 }
             }
             row {
-                addColumn(0, StringBlock().root)
-                /*listview<Block> {
-
-                }*/
-            }
-            row {
+                paddingAll = 20.0
                 label {
                     alignment = Pos.CENTER
                     text = "Visual Tokens"
                 }
             }
             row {
+                paddingAll = 20.0
                 label {
                     alignment = Pos.BOTTOM_CENTER
                     text = "Created by snaulX in 2020"
