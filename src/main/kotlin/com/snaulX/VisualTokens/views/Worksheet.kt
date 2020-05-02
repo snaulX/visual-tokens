@@ -7,9 +7,8 @@ import tornadofx.*
 
 class Worksheet() : Fragment("Visual Tokens Worksheet") {
 
-    val newFile = {
+    val newFile: () -> Unit = {
         replaceWith(Worksheet("Untitled"))
-        println() //why lambda wanna return last expression and I must write this shit
     }
     val openFile = {
     }
@@ -19,8 +18,29 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
     val exit = {
         this.close()
     }
-
+    val copy = {
+    }
+    val paste = {
+    }
+    val addBlock: () -> Unit = {
+        root.row("Choose block for add") {
+            listmenu {
+                PrintBlock()
+                StringBlock()
+            }
+        }
+        updateBlocks()
+    }
+    val removeBlock = {
+    }
+    val blocksUI = vbox()
     val blocks: MutableList<Block> = mutableListOf()
+
+    fun updateBlocks() {
+        for (block: Block in blocks) {
+            blocksUI.add(block.root)
+        }
+    }
 
     override val root = gridpane {
         row {
@@ -31,6 +51,12 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                     item("Save File", "ctrl+s").action(saveFile)
                     separator()
                     item("Close Program", "ctrl+q").action(exit)
+                }
+                menu("Edit") {
+                    item("Copy", "ctrl+c").action(copy)
+                    item("Paste", "ctrl+v").action(paste)
+                    item("Add Block", "ctrl+a").action(addBlock)
+                    item("Remove Block", "delete").action(removeBlock)
                 }
             }
         }
@@ -43,11 +69,12 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             }
         }
         row {
-            StringBlock().root
+            blocksUI
         }
     }
 
     init {
+        updateBlocks()
     }
 
     constructor(title: String) : this() {
