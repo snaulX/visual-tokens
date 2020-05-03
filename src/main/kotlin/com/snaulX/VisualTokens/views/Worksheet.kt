@@ -1,12 +1,13 @@
 package com.snaulX.VisualTokens.views
 
-import com.snaulX.VisualTokens.app.Block
-import com.snaulX.VisualTokens.app.FileWorker
+import com.snaulX.VisualTokens.app.*
 import com.snaulX.VisualTokens.blocks.*
+import javafx.beans.property.SimpleStringProperty
 import tornadofx.*
 
 class Worksheet() : Fragment("Visual Tokens Worksheet") {
 
+    val allBlocks: List<String> = listOf("Print Block")
     val newFile: () -> Unit = {
         replaceWith(Worksheet("Untitled"))
     }
@@ -22,14 +23,30 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
     }
     val paste = {
     }
+    @ExperimentalStdlibApi
     val addBlock: () -> Unit = {
-        root.row("Choose block for add") {
-            listmenu {
-                PrintBlock()
-                StringBlock()
+        dialog("Choose block for add") {
+            val selected = SimpleStringProperty()
+            combobox(selected, allBlocks).setOnAction {
+                blocks.add(
+                        when (selected.value) {
+                            "Print Block" -> PrintBlock()
+                            else -> throw Exception("Selected unknown block")
+                        }
+                )
+            }
+            hbox {
+                paddingAll = 12.0
+                button("OK").action {
+                    updateBlocks()
+                    this@dialog.close()
+                }
+                button("Cancel").action {
+                    if (selected.value != null) blocks.removeLast()
+                    this@dialog.close()
+                }
             }
         }
-        updateBlocks()
     }
     val removeBlock = {
     }
@@ -37,11 +54,13 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
     val blocks: MutableList<Block> = mutableListOf()
 
     fun updateBlocks() {
+        blocksUI.clear()
         for (block: Block in blocks) {
             blocksUI.add(block.root)
         }
     }
 
+    @ExperimentalStdlibApi
     override val root = gridpane {
         row {
             menubar {
@@ -63,13 +82,20 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
         row {
             buttonbar {
                 paddingAll = 20.0
-                button("Compile")
-                button("Run")
-                button("Compile & Run")
+                button("Compile") {
+                    shortcut("F9")
+                }
+                button("Run") {
+                    shortcut("F5")
+                    action { Parser.run(this@Worksheet) }
+                }
+                button("Compile & Run") {
+                    shortcut("F11")
+                }
             }
         }
         row {
-            blocksUI
+            this += blocksUI
         }
     }
 
