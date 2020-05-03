@@ -7,6 +7,23 @@ import tornadofx.*
 
 class Worksheet() : Fragment("Visual Tokens Worksheet") {
 
+    val duplicate: () -> Unit = {
+        copy()
+        paste()
+    }
+    val clearBlocks: () -> Unit = {
+        dialog("Do you want clear all blocks?") {
+            paddingAll = 12.0
+            button("OK").action {
+                blocks.clear()
+                updateBlocks()
+                this.close()
+            }
+            button("Cancel").action {
+                this.close()
+            }
+        }
+    }
     val allBlocks: List<String> = listOf("Print Block")
     val newFile: () -> Unit = {
         replaceWith(Worksheet("Untitled"))
@@ -20,8 +37,22 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
         this.close()
     }
     val copy = {
+        val bl: Block? = blocks.firstOrNull {
+            it.select
+        }
+        if (bl != null) {
+            clipboard.setContent {
+                putString(when (bl) {
+                    is PrintBlock -> "Print ${bl.value}"
+                    else -> "Unknown block"
+                })
+            }
+        }
     }
     val paste = {
+        val str = clipboard.string
+        if (str.startsWith("Print "))
+            blocksUI.add(PrintBlock(str.removePrefix("Print ")).root)
     }
     @ExperimentalStdlibApi
     val addBlock: () -> Unit = {
@@ -48,10 +79,26 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             }
         }
     }
-    val removeBlock = {
+    val removeBlock: () -> Unit = {
+        val bl: Block? = blocks.firstOrNull {
+            it.select
+        }
+        if (bl != null) {
+            dialog("Do you want delete block?") {
+                paddingAll = 12.0
+                button("OK").action {
+                    blocks.remove(bl)
+                    updateBlocks()
+                    this.close()
+                }
+                button("Cancel").action {
+                    this.close()
+                }
+            }
+        }
     }
-    val blocksUI = vbox()
     val blocks: MutableList<Block> = mutableListOf()
+    val blocksUI = vbox()
 
     fun updateBlocks() {
         blocksUI.clear()
@@ -74,8 +121,10 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                 menu("Edit") {
                     item("Copy", "ctrl+c").action(copy)
                     item("Paste", "ctrl+v").action(paste)
-                    item("Add Block", "ctrl+a").action(addBlock)
+                    item("Duplicate", "ctrl+d").action(duplicate)
+                    item("Add Block", "ctrl+plus").action(addBlock)
                     item("Remove Block", "delete").action(removeBlock)
+                    item("Clear Blocks", "ctrl+minus").action(clearBlocks)
                 }
             }
         }

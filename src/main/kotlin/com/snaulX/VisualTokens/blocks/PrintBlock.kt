@@ -5,10 +5,11 @@ import javafx.scene.control.TextField
 import javafx.scene.layout.HBox
 import tornadofx.*
 
-class PrintBlock : Block {
+class PrintBlock() : Block {
     override val root = HBox()
-    val value: String
+    var value: String
         get() = text.text
+        set(v) { text.text = v }
     private var text: TextField by singleAssign()
     override var select: Boolean = false
 
@@ -24,5 +25,9 @@ class PrintBlock : Block {
                 select = !select
             }
         }
+    }
+
+    constructor(value: String) : this() {
+        this.value = value
     }
 }
