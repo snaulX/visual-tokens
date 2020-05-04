@@ -5,4 +5,6 @@ import javafx.scene.layout.HBox
 interface Block {
     val root: HBox
     var select: Boolean
+
+    fun run(blocks: List<Block>)
 }

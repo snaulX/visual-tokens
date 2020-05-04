@@ -24,7 +24,7 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             }
         }
     }
-    val allBlocks: List<String> = listOf("Print Block")
+    val allBlocks: List<String> = listOf("Print Block", "Create Variable")
     val newFile: () -> Unit = {
         replaceWith(Worksheet("Untitled"))
     }
@@ -44,6 +44,7 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             clipboard.setContent {
                 putString(when (bl) {
                     is PrintBlock -> "Print ${bl.value}"
+                    is VariableBlock -> "Variable ${bl.name}"
                     else -> "Unknown block"
                 })
             }
@@ -62,6 +63,7 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                 blocks.add(
                         when (selected.value) {
                             "Print Block" -> PrintBlock()
+                            "Create Variable" -> VariableBlock()
                             else -> throw Exception("Selected unknown block")
                         }
                 )

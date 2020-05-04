@@ -1,6 +1,7 @@
 package com.snaulX.VisualTokens.blocks
 
 import com.snaulX.VisualTokens.app.Block
+import com.snaulX.VisualTokens.app.Parser
 import javafx.scene.control.TextField
 import javafx.scene.layout.HBox
 import tornadofx.*
@@ -12,6 +13,9 @@ class PrintBlock() : Block {
         set(v) { text.text = v }
     private var text: TextField by singleAssign()
     override var select: Boolean = false
+    override fun run(blocks: List<Block>) {
+        println(Parser.parseString(value))
+    }
 
     init {
         with(root) {
