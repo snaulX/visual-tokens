@@ -62,8 +62,8 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             combobox(selected, allBlocks).setOnAction {
                 blocks.add(
                         when (selected.value) {
-                            "Print Block" -> PrintBlock()
-                            "Create Variable" -> VariableBlock()
+                            allBlocks[0] -> PrintBlock()
+                            allBlocks[1] -> VariableBlock()
                             else -> throw Exception("Selected unknown block")
                         }
                 )
@@ -147,6 +147,15 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
         }
         row {
             this += blocksUI
+
+            contextmenu {
+                item("Add").action(addBlock)
+                item("Delete").action(removeBlock)
+                separator()
+                item("Copy").action(copy)
+                item("Paste").action(paste)
+                item("Duplicate").action(duplicate)
+            }
         }
     }
 
