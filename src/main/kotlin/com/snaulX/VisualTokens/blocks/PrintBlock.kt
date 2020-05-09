@@ -2,6 +2,7 @@ package com.snaulX.VisualTokens.blocks
 
 import com.snaulX.VisualTokens.app.Block
 import com.snaulX.VisualTokens.app.Parser
+import com.snaulX.VisualTokens.app.Parser.setBackground
 import javafx.scene.control.TextField
 import javafx.scene.layout.HBox
 import tornadofx.*
@@ -20,15 +21,13 @@ class PrintBlock() : Block {
     init {
         with(root) {
             paddingAll = 10.0
-            style = "-fx-background-color: orange;"
+            setBackground("orange")
             label("Print To Console") {
                 paddingRight = 10.0
             }
             text = textfield("Type there are text for prinitng")
-            setOnMouseClicked {
-                select = !select
-            }
         }
+        onSelect()
     }
 
     constructor(value: String) : this() {

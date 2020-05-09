@@ -2,7 +2,7 @@ package com.snaulX.VisualTokens.blocks
 
 import com.snaulX.VisualTokens.app.Block
 import com.snaulX.VisualTokens.app.Parser
-import javafx.geometry.Insets
+import com.snaulX.VisualTokens.app.Parser.setBackground
 import javafx.scene.control.TextField
 import javafx.scene.layout.HBox
 import tornadofx.*
@@ -26,7 +26,7 @@ class VariableBlock : Block {
     init {
         with(root) {
             paddingAll = 10.0
-            style = "-fx-background-color: blue;"
+            setBackground("blue")
             label("Create Variable") {
                 paddingRight = 10.0
             }
@@ -37,6 +37,7 @@ class VariableBlock : Block {
             }
             valueBox = textfield("Write value of variable")
         }
+        onSelect()
     }
 
     override fun run(blocks: List<Block>) {

@@ -3,20 +3,17 @@ package com.snaulX.VisualTokens.views
 import com.snaulX.VisualTokens.app.*
 import com.snaulX.VisualTokens.blocks.*
 import javafx.beans.property.SimpleStringProperty
+import javafx.scene.layout.HBox
 import tornadofx.*
 
 class Worksheet() : Fragment("Visual Tokens Worksheet") {
 
-    val duplicate: () -> Unit = {
-        copy()
-        paste()
-    }
     val clearBlocks: () -> Unit = {
         dialog("Do you want clear all blocks?") {
             paddingAll = 12.0
             button("OK").action {
                 blocks.clear()
-                updateBlocks()
+                blocksUI.refresh()
                 this.close()
             }
             button("Cancel").action {
@@ -36,10 +33,41 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
     val exit = {
         this.close()
     }
-    val copy = {
-        val bl: Block? = blocks.firstOrNull {
-            it.select
+    val paste = {
+        val str = clipboard.string
+        if (str.startsWith("Print "))
+            blocksUI.add(PrintBlock(str.removePrefix("Print ")).root)
+    }
+    @ExperimentalStdlibApi
+    val addBlock: () -> Unit = {
+        dialog("Choose block for add") {
+            val selected = SimpleStringProperty()
+            combobox(selected, allBlocks)
+            hbox {
+                paddingAll = 12.0
+                button("OK").action {
+                    blocks.add(
+                        when (selected.value) {
+                            allBlocks[0] -> PrintBlock()
+                            allBlocks[1] -> VariableBlock()
+                            else -> throw Exception("Selected unknown block")
+                        }
+                    )
+                    blocksUI.refresh()
+                    this@dialog.close()
+                }
+                button("Cancel").action {
+                    if (selected.value != null) blocks.removeLast()
+                    this@dialog.close()
+                }
+            }
         }
+    }
+    val blocks: MutableList<Block> = mutableListOf()
+    var blocksUI = tableview(blocks.toObservable())
+
+    fun copy(block: Block? = null) {
+        val bl: Block? = block ?: (blocks.firstOrNull { it.select })
         if (bl != null) {
             clipboard.setContent {
                 putString(when (bl) {
@@ -50,39 +78,12 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             }
         }
     }
-    val paste = {
-        val str = clipboard.string
-        if (str.startsWith("Print "))
-            blocksUI.add(PrintBlock(str.removePrefix("Print ")).root)
+    fun duplicate(block: Block? = null) {
+        copy(block)
+        paste()
     }
-    @ExperimentalStdlibApi
-    val addBlock: () -> Unit = {
-        dialog("Choose block for add") {
-            val selected = SimpleStringProperty()
-            combobox(selected, allBlocks).setOnAction {
-                blocks.add(
-                        when (selected.value) {
-                            allBlocks[0] -> PrintBlock()
-                            allBlocks[1] -> VariableBlock()
-                            else -> throw Exception("Selected unknown block")
-                        }
-                )
-            }
-            hbox {
-                paddingAll = 12.0
-                button("OK").action {
-                    updateBlocks()
-                    this@dialog.close()
-                }
-                button("Cancel").action {
-                    if (selected.value != null) blocks.removeLast()
-                    this@dialog.close()
-                }
-            }
-        }
-    }
-    val removeBlock: () -> Unit = {
-        val bl: Block? = blocks.firstOrNull {
+    fun removeBlock(block: Block? = null) {
+        val bl: Block? = block ?: blocks.firstOrNull {
             it.select
         }
         if (bl != null) {
@@ -90,22 +91,13 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                 paddingAll = 12.0
                 button("OK").action {
                     blocks.remove(bl)
-                    updateBlocks()
+                    blocksUI.refresh()
                     this.close()
                 }
                 button("Cancel").action {
                     this.close()
                 }
             }
-        }
-    }
-    val blocks: MutableList<Block> = mutableListOf()
-    val blocksUI = vbox()
-
-    fun updateBlocks() {
-        blocksUI.clear()
-        for (block: Block in blocks) {
-            blocksUI.add(block.root)
         }
     }
 
@@ -121,11 +113,11 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                     item("Close Program", "ctrl+q").action(exit)
                 }
                 menu("Edit") {
-                    item("Copy", "ctrl+c").action(copy)
+                    item("Copy", "ctrl+c").action { copy() }
                     item("Paste", "ctrl+v").action(paste)
-                    item("Duplicate", "ctrl+d").action(duplicate)
+                    item("Duplicate", "ctrl+d").action { duplicate() }
                     item("Add Block", "ctrl+plus").action(addBlock)
-                    item("Remove Block", "delete").action(removeBlock)
+                    item("Remove Block", "delete").action { removeBlock() }
                     item("Clear Blocks", "ctrl+minus").action(clearBlocks)
                 }
             }
@@ -146,21 +138,25 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             }
         }
         row {
-            this += blocksUI
+            blocksUI = tableview {
+                items = blocks.toObservable()
 
-            contextmenu {
-                item("Add").action(addBlock)
-                item("Delete").action(removeBlock)
-                separator()
-                item("Copy").action(copy)
-                item("Paste").action(paste)
-                item("Duplicate").action(duplicate)
+                column("Block", HBox::class)
+
+                contextmenu {
+                    item("Add").action(addBlock)
+                    item("Delete").action { removeBlock(selectedItem) }
+                    separator()
+                    item("Copy").action { copy(selectedItem) }
+                    item("Paste").action(paste)
+                    item("Duplicate").action { duplicate(selectedItem) }
+                }
             }
         }
     }
 
     init {
-        updateBlocks()
+        blocksUI.refresh()
     }
 
     constructor(title: String) : this() {
