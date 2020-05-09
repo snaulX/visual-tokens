@@ -17,4 +17,5 @@ interface Block {
         }
     }
     fun run(blocks: List<Block>)
+    fun toBytes(): ByteArray
 }

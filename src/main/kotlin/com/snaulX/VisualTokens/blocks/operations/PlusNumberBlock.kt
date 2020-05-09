@@ -26,4 +26,8 @@ class PlusNumberBlock: Block {
     override fun run(blocks: List<Block>) {
         TODO("Not yet implemented")
     }
+
+    override fun toBytes(): ByteArray {
+        return ByteArray(4)
+    }
 }

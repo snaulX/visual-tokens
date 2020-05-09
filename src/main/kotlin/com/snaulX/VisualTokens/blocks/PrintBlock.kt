@@ -14,8 +14,21 @@ class PrintBlock() : Block {
         set(v) { text.text = v }
     private var text: TextField by singleAssign()
     override var select: Boolean = false
+
     override fun run(blocks: List<Block>) {
         println(Parser.parseString(value))
+    }
+
+    override fun toBytes(): ByteArray {
+        val ba = ByteArray(4 + value.length)
+        ba[0] = 0 //
+        ba[1] = 0 // Code of block
+        ba[2] = 0 //
+        ba[3] = if (select) 1 else 0
+        for (i in ba[4]..ba.last()) {
+            println(i)
+        }
+        return ba
     }
 
     init {

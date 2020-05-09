@@ -28,7 +28,7 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
     val openFile = {
     }
     val saveFile = {
-        FileWorker.save(this)
+        this.title = """${FileWorker.save(this)} - Visual Tokens"""
     }
     val exit = {
         this.close()
@@ -162,10 +162,11 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
     }
 
     init {
+        title = "Visual Tokens Worksheet"
         refresh()
     }
 
     constructor(title: String) : this() {
-        this.title = title
+        this.title = "$title - Visual Tokens"
     }
 }

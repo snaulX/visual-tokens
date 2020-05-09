@@ -43,4 +43,8 @@ class VariableBlock : Block {
     override fun run(blocks: List<Block>) {
         Parser.variables.put(name, value)
     }
+
+    override fun toBytes(): ByteArray {
+        return ByteArray(4)
+    }
 }
