@@ -2,8 +2,8 @@ package com.snaulX.VisualTokens.views
 
 import com.snaulX.VisualTokens.app.*
 import com.snaulX.VisualTokens.blocks.*
+import com.snaulX.VisualTokens.blocks.operations.*
 import javafx.beans.property.SimpleStringProperty
-import javafx.scene.layout.HBox
 import tornadofx.*
 
 class Worksheet() : Fragment("Visual Tokens Worksheet") {
@@ -13,7 +13,7 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             paddingAll = 12.0
             button("OK").action {
                 blocks.clear()
-                blocksUI.refresh()
+                refresh()
                 this.close()
             }
             button("Cancel").action {
@@ -21,7 +21,7 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             }
         }
     }
-    val allBlocks: List<String> = listOf("Print Block", "Create Variable")
+    val allBlocks: List<String> = listOf("Print Block", "Create Variable", "Operation Plus")
     val newFile: () -> Unit = {
         replaceWith(Worksheet("Untitled"))
     }
@@ -36,7 +36,8 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
     val paste = {
         val str = clipboard.string
         if (str.startsWith("Print "))
-            blocksUI.add(PrintBlock(str.removePrefix("Print ")).root)
+            blocks.add(PrintBlock(str.removePrefix("Print ")))
+        refresh()
     }
     @ExperimentalStdlibApi
     val addBlock: () -> Unit = {
@@ -50,10 +51,11 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                         when (selected.value) {
                             allBlocks[0] -> PrintBlock()
                             allBlocks[1] -> VariableBlock()
+                            allBlocks[2] -> PlusNumberBlock()
                             else -> throw Exception("Selected unknown block")
                         }
                     )
-                    blocksUI.refresh()
+                    refresh()
                     this@dialog.close()
                 }
                 button("Cancel").action {
@@ -63,11 +65,8 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             }
         }
     }
-    val blocks: MutableList<Block> = mutableListOf()
-    var blocksUI = tableview(blocks.toObservable())
-
-    fun copy(block: Block? = null) {
-        val bl: Block? = block ?: (blocks.firstOrNull { it.select })
+    val copy = {
+        val bl: Block? = blocks.firstOrNull { it.select }
         if (bl != null) {
             clipboard.setContent {
                 putString(when (bl) {
@@ -78,12 +77,12 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             }
         }
     }
-    fun duplicate(block: Block? = null) {
-        copy(block)
+    val duplicate = {
+        copy()
         paste()
     }
-    fun removeBlock(block: Block? = null) {
-        val bl: Block? = block ?: blocks.firstOrNull {
+    val removeBlock = {
+        val bl: Block? = blocks.firstOrNull {
             it.select
         }
         if (bl != null) {
@@ -91,13 +90,22 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                 paddingAll = 12.0
                 button("OK").action {
                     blocks.remove(bl)
-                    blocksUI.refresh()
+                    refresh()
                     this.close()
                 }
                 button("Cancel").action {
                     this.close()
                 }
             }
+        }
+    }
+    var blocksUI = vbox()
+    val blocks: MutableList<Block> = mutableListOf()
+
+    fun refresh() {
+        blocksUI.children.clear()
+        for (block in blocks) {
+            blocksUI.add(block.root)
         }
     }
 
@@ -113,11 +121,11 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                     item("Close Program", "ctrl+q").action(exit)
                 }
                 menu("Edit") {
-                    item("Copy", "ctrl+c").action { copy() }
+                    item("Copy", "ctrl+c").action(copy)
                     item("Paste", "ctrl+v").action(paste)
-                    item("Duplicate", "ctrl+d").action { duplicate() }
+                    item("Duplicate", "ctrl+d").action(duplicate)
                     item("Add Block", "ctrl+plus").action(addBlock)
-                    item("Remove Block", "delete").action { removeBlock() }
+                    item("Remove Block", "delete").action(removeBlock)
                     item("Clear Blocks", "ctrl+minus").action(clearBlocks)
                 }
             }
@@ -138,25 +146,23 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             }
         }
         row {
-            blocksUI = tableview {
-                items = blocks.toObservable()
-
-                column("Block", HBox::class)
-
-                contextmenu {
-                    item("Add").action(addBlock)
-                    item("Delete").action { removeBlock(selectedItem) }
-                    separator()
-                    item("Copy").action { copy(selectedItem) }
-                    item("Paste").action(paste)
-                    item("Duplicate").action { duplicate(selectedItem) }
+            blocksUI = vbox {
+                setOnContextMenuRequested {
+                    contextmenu {
+                        item("Add").action(addBlock)
+                        item("Delete").action(removeBlock)
+                        separator()
+                        item("Copy").action(copy)
+                        item("Paste").action(paste)
+                        item("Duplicate").action(duplicate)
+                    }
                 }
             }
         }
     }
 
     init {
-        blocksUI.refresh()
+        refresh()
     }
 
     constructor(title: String) : this() {
