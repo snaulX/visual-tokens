@@ -1,6 +1,5 @@
 package com.snaulX.VisualTokens.views
 
-import com.snaulX.VisualTokens.app.Parser
 import javafx.beans.property.SimpleStringProperty
 import javafx.scene.control.TextField
 import javafx.scene.layout.Pane
@@ -9,7 +8,7 @@ import tornadofx.*
 private val win: Worksheet
     get() = find(Worksheet::class)
 
-val operators: List<String> = listOf("+")
+val operators: List<String> = listOf("+", "==", "!", "||", "&&", ">", "<", "-", "+", "*", "/", "%")
 
 fun Pane.textvaluefield(text: String?): TextField {
     return textfield(text) {
