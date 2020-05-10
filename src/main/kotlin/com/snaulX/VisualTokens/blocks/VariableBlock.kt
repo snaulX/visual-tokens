@@ -52,4 +52,8 @@ class VariableBlock : Block {
         ba[1] = if (select) 1 else 0
         return ba
     }
+
+    override fun read(start: Int, data: ByteArray): Int {
+        return start
+    }
 }

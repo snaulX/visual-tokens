@@ -1,6 +1,7 @@
 package com.snaulX.VisualTokens.views
 
 import com.snaulX.VisualTokens.app.*
+import com.snaulX.VisualTokens.app.Parser.toBlocks
 import com.snaulX.VisualTokens.blocks.*
 import javafx.beans.property.SimpleStringProperty
 import tornadofx.*
@@ -36,9 +37,7 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
         this.close()
     }
     val paste = {
-        val str = clipboard.string
-        if (str.startsWith("Print "))
-            blocks.add(PrintBlock(str.removePrefix("Print ")))
+        blocks.addAll(clipboard.string.toByteArray().toBlocks())
         refresh()
     }
     @ExperimentalStdlibApi
@@ -70,11 +69,7 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
         val bl: Block? = blocks.firstOrNull { it.select }
         if (bl != null) {
             clipboard.setContent {
-                putString(when (bl) {
-                    is PrintBlock -> "Print ${bl.value}"
-                    is VariableBlock -> "Variable ${bl.name}"
-                    else -> "Unknown block"
-                })
+                putString(bl.toBytes().toString())
             }
         }
     }

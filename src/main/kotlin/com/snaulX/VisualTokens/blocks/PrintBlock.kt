@@ -31,6 +31,10 @@ class PrintBlock() : Block {
         return ba
     }
 
+    override fun read(start: Int, data: ByteArray): Int {
+        return start
+    }
+
     init {
         with(root) {
             paddingAll = 10.0

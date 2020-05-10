@@ -42,7 +42,6 @@ object Parser {
         val file = FileSpec.builder("",
                 worksheet.title.removeSuffix(" - Visual Tokens"))
         val funBuilder = FunSpec.builder("main")
-                .addParameter("args", Array<String>::class)
         for (block in worksheet.blocks) {
             when (block) {
                 is PrintBlock -> funBuilder.addStatement("println(%P)",
@@ -55,11 +54,23 @@ object Parser {
         }
         file.addFunction(funBuilder.build())
                 .build()
-                .writeTo(File(file.name + ".kt"))
+                .writeTo(File("${file.name} Tokens Project"))
     }
 
-    fun Node.setBackground(bg: String) {
-        this.style += "-fx-background-color: $bg;"
+    fun ByteArray.toBlocks(): List<Block> {
+        val blocks: MutableList<Block> = mutableListOf()
+        var i = 0
+        while (i < this.size) {
+            blocks.add(when (this[i].toInt()) {
+                0 -> PrintBlock()
+                1 -> VariableBlock()
+                else -> throw Exception("Invalid code of block ${this[i]}")
+            }.apply {
+                i = read(i, this@toBlocks)
+            })
+            //i++
+        }
+        return blocks.toList()
     }
 
     fun Pane.setBackground(bg: String) {

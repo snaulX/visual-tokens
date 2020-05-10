@@ -1,6 +1,5 @@
 package com.snaulX.VisualTokens.app
 
-import javafx.scene.control.ComboBox
 import javafx.scene.layout.HBox
 import tornadofx.*
 
@@ -19,4 +18,5 @@ interface Block {
     }
     fun run(blocks: List<Block>)
     fun toBytes(): ByteArray
+    fun read(start: Int, data: ByteArray): Int
 }

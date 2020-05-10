@@ -1,5 +1,6 @@
 package com.snaulX.VisualTokens.app
 
+import com.snaulX.VisualTokens.app.Parser.toBlocks
 import com.snaulX.VisualTokens.blocks.*
 import com.snaulX.VisualTokens.operations.PlusOperator
 import com.snaulX.VisualTokens.views.MainView
@@ -36,26 +37,8 @@ object FileWorker {
         return try {
             val file: File = fileChooser.showOpenDialog(find(MainView::class).currentWindow)
             val bytes: ByteArray = DataInputStream(FileInputStream(file)).readBytes()
-            val blocks: MutableList<Block> = mutableListOf()
-            run {
-                var curBlock: Block? = null
-                for (b in bytes) {
-                    if (curBlock == null) {
-                        when (b.toInt()) {
-                            0 -> curBlock = PrintBlock()
-                            1 -> curBlock = VariableBlock()
-                        }
-                    } else {
-                        when (curBlock) {
-                            is PrintBlock -> {}
-                            is VariableBlock -> {}
-                            is PlusOperator -> {}
-                        }
-                    }
-                }
-            } //parse bytes
             val worksheet: Worksheet = Worksheet(title = file.absolutePath)
-            worksheet.blocks.addAll(blocks)
+            worksheet.blocks.addAll(bytes.toBlocks())
             worksheet
         } catch (e: Exception) {
             println(e)
