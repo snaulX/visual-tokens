@@ -3,7 +3,7 @@ package com.snaulX.VisualTokens.blocks
 import com.snaulX.VisualTokens.app.Block
 import com.snaulX.VisualTokens.app.Parser
 import com.snaulX.VisualTokens.app.Parser.setBackground
-import com.snaulX.VisualTokens.views.TextValueField
+import com.snaulX.VisualTokens.views.textvaluefield
 import javafx.scene.control.TextField
 import javafx.scene.layout.HBox
 import tornadofx.*
@@ -38,8 +38,7 @@ class PrintBlock() : Block {
             label("Print To Console") {
                 paddingRight = 10.0
             }
-            text = textfield("Type there are text for prinitng")
-            //text = TextValueField("Type there are text for printing")
+            text = textvaluefield("Type there are text for prinitng")
         }
         onSelect()
     }

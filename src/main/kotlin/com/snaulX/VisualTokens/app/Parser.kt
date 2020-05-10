@@ -4,16 +4,16 @@ import com.snaulX.VisualTokens.blocks.PrintBlock
 import com.snaulX.VisualTokens.blocks.VariableBlock
 import com.snaulX.VisualTokens.operations.PlusOperator
 import com.snaulX.VisualTokens.views.Worksheet
+import com.snaulX.VisualTokens.views.operators
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.PropertySpec
 import javafx.scene.Node
 import javafx.scene.layout.Pane
 import java.io.File
 
 object Parser {
     val varCode: Regex = Regex("""vtvar_(\S+)\?""")
-    val opCode: Regex = Regex("""vtop_(\S+|\D+)&(\S+)&(\S+)\?""")
+    val opCode: Regex = Regex("""vtop_(\S+|\D+)!(\S+)!(\S+)!""")
     val variables: MutableMap<String, String> = mutableMapOf()
 
     fun run(work: Worksheet) {
@@ -24,11 +24,12 @@ object Parser {
 
     fun parseString(str: String): String {
         return opCode.replace(varCode.replace(str) {
+            println(it.destructured.component1())
             return@replace variables[it.destructured.component1()]!!
         }) {
             val res: MatchResult.Destructured = it.destructured
             val operator: Operator = when (res.component1()) {
-                "+" -> PlusOperator()
+                operators[0] -> PlusOperator()
                 else -> throw Exception("Invalid operator code")
             }
             operator.firstValue = res.component2()

@@ -3,6 +3,7 @@ package com.snaulX.VisualTokens.blocks
 import com.snaulX.VisualTokens.app.Block
 import com.snaulX.VisualTokens.app.Parser
 import com.snaulX.VisualTokens.app.Parser.setBackground
+import com.snaulX.VisualTokens.views.textvaluefield
 import javafx.scene.control.TextField
 import javafx.scene.layout.HBox
 import tornadofx.*
@@ -36,13 +37,13 @@ class VariableBlock : Block {
                     marginRight = 10.0
                 }
             }
-            valueBox = textfield("Write value of variable")
+            valueBox = textvaluefield("Write value of variable")
         }
         onSelect()
     }
 
     override fun run(blocks: List<Block>) {
-        Parser.variables.put(name, value)
+        Parser.variables.put(name.trim(), value)
     }
 
     override fun toBytes(): ByteArray {

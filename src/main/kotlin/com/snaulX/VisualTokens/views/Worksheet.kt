@@ -43,7 +43,7 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
     }
     @ExperimentalStdlibApi
     val addBlock: () -> Unit = {
-        dialog("Choose block for add") {
+        dialog("Select block for add") {
             val selected = SimpleStringProperty()
             combobox(selected, allBlocks)
             hbox {
