@@ -1,5 +1,6 @@
 package com.snaulX.VisualTokens.app
 
+import com.snaulX.VisualTokens.blocks.EndBlock
 import com.snaulX.VisualTokens.blocks.PrintBlock
 import com.snaulX.VisualTokens.blocks.VariableBlock
 import com.snaulX.VisualTokens.operations.*
@@ -15,6 +16,7 @@ object Parser {
     val varCode: Regex = Regex("""vtvar_(.+)\?""")
     val opCode: Regex = Regex("""vtop_(\S+|\D+)!(.+)!(.+)!""")
     val variables: MutableMap<String, String> = mutableMapOf()
+    val levelOfBlocks: MutableList<Boolean> = mutableListOf()
     private var input = ""
 
     private fun input(): String {
@@ -29,9 +31,13 @@ object Parser {
     }
 
     fun run(work: Worksheet) {
+        levelOfBlocks.add(true)
         for (block in work.blocks) {
-            block.run(work.blocks)
+            if (levelOfBlocks.last() || block is EndBlock) {
+                block.run(work.blocks)
+            }
         }
+        levelOfBlocks.clear()
     }
 
     fun parseString(str: String): String {
@@ -57,7 +63,7 @@ object Parser {
             operator.firstValue = res.component2()
             operator.secondValue = res.component3()
             return@replace operator.eval()
-        }).replace("%input%", input())
+        })
     }
 
     fun compile(worksheet: Worksheet) {
