@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox
 import tornadofx.*
 
 class PrintBlock() : Block {
+    override val code: Byte = 0
     override val root = HBox()
     var value: String
         get() = text.text
@@ -20,13 +21,11 @@ class PrintBlock() : Block {
     }
 
     override fun toBytes(): ByteArray {
-        val ba = ByteArray(4 + value.length)
-        ba[0] = 0 //
-        ba[1] = 0 // Code of block
-        ba[2] = 0 //
-        ba[3] = if (select) 1 else 0
-        for (i in ba[4]..ba.last()) {
-            println(i)
+        val ba = ByteArray(2 + value.length)
+        ba[0] = code
+        ba[1] = if (select) 1 else 0
+        for (i in 2..ba.lastIndex) {
+            ba[i] = value[i - 2].toByte()
         }
         return ba
     }

@@ -1,5 +1,6 @@
 package com.snaulX.VisualTokens.views
 
+import com.snaulX.VisualTokens.app.FileWorker
 import javafx.geometry.Pos
 import javafx.scene.text.Font
 import javafx.stage.Screen
@@ -7,11 +8,11 @@ import tornadofx.*
 
 class MainView : View("Visual Tokens") {
     
-    val newFile = {
+    val newFile: () -> Unit = {
         Worksheet("Untitled").openWindow()
-        println() //why lambda wanna return last expression and I must write this shit
     }
-    val openFile = {
+    val openFile: () -> Unit = {
+        FileWorker.open()?.openWindow()
     }
     val exit = {
         this.close()

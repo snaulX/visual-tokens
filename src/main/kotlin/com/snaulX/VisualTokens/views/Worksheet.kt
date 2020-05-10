@@ -2,7 +2,6 @@ package com.snaulX.VisualTokens.views
 
 import com.snaulX.VisualTokens.app.*
 import com.snaulX.VisualTokens.blocks.*
-import com.snaulX.VisualTokens.blocks.operations.*
 import javafx.beans.property.SimpleStringProperty
 import tornadofx.*
 
@@ -21,11 +20,14 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
             }
         }
     }
-    val allBlocks: List<String> = listOf("Print Block", "Create Variable", "Operation Plus")
+    val allBlocks: List<String> = listOf("Print Block", "Create Variable")
     val newFile: () -> Unit = {
         replaceWith(Worksheet("Untitled"))
     }
     val openFile = {
+        val ws: Worksheet? = FileWorker.open()
+        if (ws != null)
+            replaceWith(ws)
     }
     val saveFile = {
         this.title = """${FileWorker.save(this)} - Visual Tokens"""
@@ -51,7 +53,6 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                         when (selected.value) {
                             allBlocks[0] -> PrintBlock()
                             allBlocks[1] -> VariableBlock()
-                            allBlocks[2] -> PlusNumberBlock()
                             else -> throw Exception("Selected unknown block")
                         }
                     )

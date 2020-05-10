@@ -20,6 +20,7 @@ class VariableBlock : Block {
         set(value) {
             valueBox.text = value
         }
+    override val code: Byte = 1
     override val root: HBox = HBox()
     override var select: Boolean = false
 
@@ -45,6 +46,9 @@ class VariableBlock : Block {
     }
 
     override fun toBytes(): ByteArray {
-        return ByteArray(4)
+        val ba: ByteArray = ByteArray(2 + name.length + value.length)
+        ba[0] = code
+        ba[1] = if (select) 1 else 0
+        return ba
     }
 }

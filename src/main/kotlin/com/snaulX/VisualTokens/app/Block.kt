@@ -5,6 +5,7 @@ import javafx.scene.layout.HBox
 import tornadofx.*
 
 interface Block {
+    val code: Byte
     val root: HBox
     var select: Boolean
 
