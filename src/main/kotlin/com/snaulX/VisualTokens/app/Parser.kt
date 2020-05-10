@@ -1,6 +1,7 @@
 package com.snaulX.VisualTokens.app
 
 import com.snaulX.VisualTokens.blocks.EndBlock
+import com.snaulX.VisualTokens.blocks.IfBlock
 import com.snaulX.VisualTokens.blocks.PrintBlock
 import com.snaulX.VisualTokens.blocks.VariableBlock
 import com.snaulX.VisualTokens.operations.*
@@ -11,6 +12,7 @@ import com.squareup.kotlinpoet.FunSpec
 import javafx.scene.layout.Pane
 import tornadofx.*
 import java.io.File
+import java.lang.Thread.sleep
 
 object Parser {
     val varCode: Regex = Regex("""vtvar_(.+)\?""")
@@ -41,7 +43,7 @@ object Parser {
     }
 
     fun parseString(str: String): String {
-        return (opCode.replace(varCode.replace(str) {
+        val s = (opCode.replace(varCode.replace(str) {
             return@replace variables[it.destructured.component1()]!!
         }) {
             val res: MatchResult.Destructured = it.destructured
@@ -64,6 +66,12 @@ object Parser {
             operator.secondValue = res.component3()
             return@replace operator.eval()
         })
+        if (s.contains("%input%")) {
+            var input = input()
+            while (input.isEmpty()) sleep(0)
+            s.replace("%input%", input)
+        }
+        return s
     }
 
     fun compile(worksheet: Worksheet) {
@@ -78,6 +86,8 @@ object Parser {
                         })
                 is VariableBlock -> funBuilder.addStatement(
                         "var ${block.name} = \"\"\"${block.value}\"\"\"")
+                is IfBlock -> funBuilder.addStatement("if (${block.statementValue}) {")
+                is EndBlock -> funBuilder.addStatement("}")
             }
         }
         file.addFunction(funBuilder.build())
