@@ -3,10 +3,14 @@ package com.snaulX.VisualTokens.views
 import javafx.scene.control.TextField
 import tornadofx.*
 
-class TextValueField(text: String?) : TextField(text) {
-    init {
-        contextmenu {
-            //pass
+class TextValueField() : TextField("") {
+    constructor(text: String?) : this() {
+        this.text = text
+        setOnContextMenuRequested {
+            contextmenu {
+                item("Add Variable")
+                item("Add Operator")
+            }
         }
     }
 }

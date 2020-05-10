@@ -136,6 +136,7 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                 paddingAll = 20.0
                 button("Compile") {
                     shortcut("F9")
+                    action { Parser.compile(this@Worksheet) }
                 }
                 button("Run") {
                     shortcut("F5")
@@ -143,6 +144,10 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                 }
                 button("Compile & Run") {
                     shortcut("F11")
+                    action {
+                        Parser.compile(this@Worksheet)
+                        Parser.run(this@Worksheet)
+                    }
                 }
             }
         }

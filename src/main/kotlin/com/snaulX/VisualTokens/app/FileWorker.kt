@@ -25,7 +25,7 @@ object FileWorker {
             for (block in work.blocks) {
                 writer.write(block.toBytes())
             }
-            file.absolutePath
+            file.nameWithoutExtension
         } catch (e: Exception) {
             println(e)
             "Untitled"
