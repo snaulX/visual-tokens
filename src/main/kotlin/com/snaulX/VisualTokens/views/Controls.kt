@@ -47,6 +47,9 @@ fun Pane.textvaluefield(text: String?): TextField {
                     }
                 }
             }
+            item("Insert Input").action {
+                this@textfield.text += "%input%"
+            }
         }
     }
 }

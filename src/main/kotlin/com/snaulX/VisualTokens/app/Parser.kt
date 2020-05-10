@@ -7,14 +7,26 @@ import com.snaulX.VisualTokens.views.Worksheet
 import com.snaulX.VisualTokens.views.operators
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
-import javafx.scene.Node
 import javafx.scene.layout.Pane
+import tornadofx.*
 import java.io.File
 
 object Parser {
     val varCode: Regex = Regex("""vtvar_(.+)\?""")
     val opCode: Regex = Regex("""vtop_(\S+|\D+)!(.+)!(.+)!""")
     val variables: MutableMap<String, String> = mutableMapOf()
+    private var input = ""
+
+    private fun input(): String {
+        find(Worksheet::class).dialog("Input") {
+            val inputField = textfield()
+            button("OK").action {
+                input = inputField.text
+                this.close()
+            }
+        }
+        return input
+    }
 
     fun run(work: Worksheet) {
         for (block in work.blocks) {
@@ -23,7 +35,7 @@ object Parser {
     }
 
     fun parseString(str: String): String {
-        return opCode.replace(varCode.replace(str) {
+        return (opCode.replace(varCode.replace(str) {
             return@replace variables[it.destructured.component1()]!!
         }) {
             val res: MatchResult.Destructured = it.destructured
@@ -45,7 +57,7 @@ object Parser {
             operator.firstValue = res.component2()
             operator.secondValue = res.component3()
             return@replace operator.eval()
-        }
+        }).replace("%input%", input())
     }
 
     fun compile(worksheet: Worksheet) {
@@ -78,7 +90,6 @@ object Parser {
             }.apply {
                 i = read(i, this@toBlocks)
             })
-            //i++
         }
         return blocks.toList()
     }
