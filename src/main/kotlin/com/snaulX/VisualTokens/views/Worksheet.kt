@@ -120,9 +120,9 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                     item("Copy", "ctrl+c").action(copy)
                     item("Paste", "ctrl+v").action(paste)
                     item("Duplicate", "ctrl+d").action(duplicate)
-                    item("Add Block", "ctrl+plus").action(addBlock)
+                    item("Add Block", "ctrl+shift+n").action(addBlock)
                     item("Remove Block", "delete").action(removeBlock)
-                    item("Clear Blocks", "ctrl+minus").action(clearBlocks)
+                    item("Clear Blocks", "ctrl+delete").action(clearBlocks)
                 }
             }
         }

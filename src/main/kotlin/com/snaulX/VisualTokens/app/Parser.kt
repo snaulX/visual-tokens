@@ -12,8 +12,8 @@ import javafx.scene.layout.Pane
 import java.io.File
 
 object Parser {
-    val varCode: Regex = Regex("""vtvar_(\S+)\?""")
-    val opCode: Regex = Regex("""vtop_(\S+|\D+)!(\S+)!(\S+)!""")
+    val varCode: Regex = Regex("""vtvar_(.+)\?""")
+    val opCode: Regex = Regex("""vtop_(\S+|\D+)!(.+)!(.+)!""")
     val variables: MutableMap<String, String> = mutableMapOf()
 
     fun run(work: Worksheet) {
@@ -24,7 +24,6 @@ object Parser {
 
     fun parseString(str: String): String {
         return opCode.replace(varCode.replace(str) {
-            println(it.destructured.component1())
             return@replace variables[it.destructured.component1()]!!
         }) {
             val res: MatchResult.Destructured = it.destructured
