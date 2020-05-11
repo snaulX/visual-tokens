@@ -33,7 +33,7 @@ class IfBlock: Block {
     }
 
     override fun run(blocks: List<Block>) {
-        Parser.levelOfBlocks.add(statementValue.toBoolean())
+        Parser.levelOfBlocks.add(Parser.parseString(statementValue).toBoolean())
     }
 
     override fun toBytes(): ByteArray {

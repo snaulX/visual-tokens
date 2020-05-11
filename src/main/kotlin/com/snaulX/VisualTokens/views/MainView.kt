@@ -9,13 +9,11 @@ import tornadofx.*
 class MainView : View("Visual Tokens") {
     
     val newFile: () -> Unit = {
-        Worksheet("Untitled").openWindow()
+        this.close()
+        Worksheet("Untitled").openModal()
     }
     val openFile: () -> Unit = {
         FileWorker.open()?.openWindow()
-    }
-    val exit = {
-        this.close()
     }
 
     override val root = anchorpane {
@@ -29,7 +27,9 @@ class MainView : View("Visual Tokens") {
                         item("New File", "ctrl+n").action(newFile)
                         item("Open File", "ctrl+o").action(openFile)
                         separator()
-                        item("Exit", "ctrl+q").action(exit)
+                        item("Exit", "ctrl+q").action {
+                            this@MainView.close()
+                        }
                     }
                 }
             }
@@ -46,16 +46,16 @@ class MainView : View("Visual Tokens") {
             }
             row {
                 paddingAll = 20.0
-                alignment = Pos.CENTER
                 label {
+                    alignment = Pos.CENTER
                     text = "Visual Tokens"
                     font = Font.font(30.0)
                 }
             }
             row {
                 paddingAll = 20.0
-                alignment = Pos.BOTTOM_CENTER
                 label {
+                    alignment = Pos.BOTTOM_CENTER
                     text = "Created by snaulX in 2020"
                     font = Font.font(30.0)
                 }

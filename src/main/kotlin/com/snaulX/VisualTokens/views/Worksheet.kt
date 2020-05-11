@@ -4,10 +4,12 @@ import com.snaulX.VisualTokens.app.*
 import com.snaulX.VisualTokens.app.Parser.toBlocks
 import com.snaulX.VisualTokens.blocks.*
 import javafx.beans.property.SimpleStringProperty
+import javafx.stage.Screen
 import tornadofx.*
 
 class Worksheet() : Fragment("Visual Tokens Worksheet") {
 
+    private val screen = Screen.getPrimary().bounds
     val clearBlocks: () -> Unit = {
         dialog("Do you want clear all blocks?") {
             paddingAll = 12.0
@@ -110,10 +112,10 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
 
     @ExperimentalStdlibApi
     override val root = gridpane {
-        prefWidth(1000.0)
-        prefHeight(750.0)
+        minWidth = screen.width
         row {
             menubar {
+                minWidth = screen.width
                 menu("File") {
                     item("New File", "ctrl+n").action(newFile)
                     item("Open File", "ctrl+o").action(openFile)
@@ -129,30 +131,23 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
                     item("Remove Block", "delete").action(removeBlock)
                     item("Clear Blocks", "ctrl+delete").action(clearBlocks)
                 }
-            }
-        }
-        row {
-            buttonbar {
-                paddingAll = 20.0
-                button("Compile") {
-                    shortcut("F9")
-                    action { Parser.compile(this@Worksheet) }
-                }
-                button("Run") {
-                    shortcut("F5")
-                    action { Parser.run(this@Worksheet) }
-                }
-                button("Compile & Run") {
-                    shortcut("F11")
-                    action {
+                menu("Run") {
+                    item("Compile", "F9").action {
                         Parser.compile(this@Worksheet)
+                    }
+                    item("Run", "F5").action {
                         Parser.run(this@Worksheet)
+                    }
+                    item("Compile & Run", "F11").action {
+                        Parser.run(this@Worksheet)
+                        Parser.compile(this@Worksheet)
                     }
                 }
             }
         }
         row {
             blocksUI = vbox {
+                minHeight = screen.height / 1.4
                 setOnContextMenuRequested {
                     contextmenu {
                         item("Add").action(addBlock)
