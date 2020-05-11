@@ -110,6 +110,8 @@ class Worksheet() : Fragment("Visual Tokens Worksheet") {
 
     @ExperimentalStdlibApi
     override val root = gridpane {
+        prefWidth(1000.0)
+        prefHeight(750.0)
         row {
             menubar {
                 menu("File") {

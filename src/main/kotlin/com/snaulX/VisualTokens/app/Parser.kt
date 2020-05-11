@@ -1,18 +1,13 @@
 package com.snaulX.VisualTokens.app
 
-import com.snaulX.VisualTokens.blocks.EndBlock
-import com.snaulX.VisualTokens.blocks.IfBlock
-import com.snaulX.VisualTokens.blocks.PrintBlock
-import com.snaulX.VisualTokens.blocks.VariableBlock
+import com.snaulX.VisualTokens.blocks.*
 import com.snaulX.VisualTokens.operations.*
 import com.snaulX.VisualTokens.views.Worksheet
 import com.snaulX.VisualTokens.views.operators
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import javafx.scene.layout.Pane
-import tornadofx.*
 import java.io.File
-import java.lang.Thread.sleep
 
 object Parser {
     val varCode: Regex = Regex("""vtvar_(.+)\?""")
@@ -21,16 +16,17 @@ object Parser {
     val levelOfBlocks: MutableList<Boolean> = mutableListOf()
     private var input = ""
 
-    private fun input(): String {
+    /*private fun input(): String {
         find(Worksheet::class).dialog("Input") {
             val inputField = textfield()
+            //val scanner: Scanner = Scanner(inputField.)
             button("OK").action {
                 input = inputField.text
                 this.close()
             }
         }
         return input
-    }
+    }*/
 
     fun run(work: Worksheet) {
         levelOfBlocks.add(true)
@@ -67,9 +63,7 @@ object Parser {
             return@replace operator.eval()
         })
         if (s.contains("%input%")) {
-            var input = input()
-            while (input.isEmpty()) sleep(0)
-            s.replace("%input%", input)
+            s.replace("%input%", readLine()!!)
         }
         return s
     }
@@ -93,6 +87,8 @@ object Parser {
         file.addFunction(funBuilder.build())
                 .build()
                 .writeTo(File("${file.name} Tokens Project"))
+        Runtime.getRuntime().exec(
+                "notepad.exe ${file.name} Tokens Project\\${file.name}.kt")
     }
 
     fun ByteArray.toBlocks(): List<Block> {
