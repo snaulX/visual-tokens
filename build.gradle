@@ -12,7 +12,7 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     implementation 'no.tornado:tornadofx:1.7.20'
-    compile 'com.squareup:kotlinpoet:1.5.0'
+    implementation 'com.squareup:kotlinpoet:1.5.0'
 }
 
 compileKotlin {
@@ -20,4 +20,17 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+sourceSets {
+    main.kotlin.srcDirs += 'src/main/kotlin'
+}
+
+jar {
+    archiveFileName = "visual_tokens.jar"
+    manifest {
+        attributes 'Main-Class' : 'com.snaulX.VisualTokens.views.MainAppKt'
+        attributes 'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
+    }
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }

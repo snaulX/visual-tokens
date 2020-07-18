@@ -4,6 +4,6 @@ import tornadofx.App
 
 class MainApp : App(MainView::class)
 
-fun main(args: Array<String>) {
-    tornadofx.launch<MainApp>(args)
-}
+    fun main(args: Array<String>) {
+        tornadofx.launch<MainApp>(args)
+    }
